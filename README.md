@@ -44,6 +44,12 @@ Designed to streamline library operations, the system simplifies data management
 
 ## Getting Started
 
+## Features
+
+- **JWT Authentication**: Secure the access to the API with JSON Web Tokens.
+- **Token Revocation**: The system enforces single-use validity for tokens, meaning each token can only be used once. This approach significantly enhances security by preventing token reuse, reducing the risk of unauthorized access or replay attacks.
+- **CRUD Operations**: It manages users, authors, book, and book-author relationships.
+
 ### Prerequisites
 
 - XAMPP
