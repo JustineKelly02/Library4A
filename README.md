@@ -222,7 +222,7 @@ Designed to streamline library operations, the system simplifies data management
       "data": [
         {
           "userid": 1,
-          "username": "your_username"
+          "username": "marc123"
         }
       ]
     }
@@ -340,7 +340,7 @@ Designed to streamline library operations, the system simplifies data management
   {
   "token": " input the generated JwtToken Here",
   "authorid": "4",
-  "name": "Author_Name"
+  "name": "Author1"
     }
   ```
 
