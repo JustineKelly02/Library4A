@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Users</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Authors List</h1>
+        <button class="back-btn" onclick="goBack()">Back to Main Page</button>
+        <button id="loadUsersBtn">Load Users</button>
+
+        <div id="message" class="message"></div>
+
+        <table id="usersTable">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Username</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        function goBack() {
+    window.location.href = 'main.html'; // Redirect to the main page
+}
+
+// Show Authors JS
+document.getElementById('loadUsersBtn').addEventListener('click', function() {
+    const messageDiv = document.getElementById('message');
+    const usersTable = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
+    
+    // Get token from cookie
+    const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
+
+    if (!token) {
+        messageDiv.textContent = 'Please login to view users.';
+        messageDiv.style.color = 'red';
+        return;
+    }
+
+    // Send GET request to fetch authors
+    fetch('http://127.0.0.1/library/public/user/show', {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            messageDiv.textContent = 'Users loaded successfully.';
+            messageDiv.style.color = 'green';
+            
+            // Clear previous users
+            usersTable.innerHTML = '';
+
+            // Populate the table with users data
+            data.data.forEach(user => {
+                const row = usersTable.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                cell1.textContent = user.userid;
+                cell2.textContent = user.username;
+            });
+
+            // Store the new token in the cookie (for next request)
+            if (data.token) {
+                setCookie('token', data.token, 1); // Store new token in the cookie
+            }
+
+        } else {
+            messageDiv.textContent = data.data?.title || 'Error loading authors.';
+            messageDiv.style.color = 'red';
+        }
+    })
+    .catch(error => {
+        messageDiv.textContent = 'Error connecting to the server.';
+        messageDiv.style.color = 'red';
+        console.error(error);
+    });
+});
+
+// Function to set cookie
+function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000)); // Set expiration time
+    let expires = "expires=" + d.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+    </script>
+</body>
+</html>
