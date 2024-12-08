@@ -89,7 +89,48 @@
     </div>
 
     <script>
-        src="script.js"
+    document.getElementById('loginBtn').addEventListener('click', () => {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const messageDiv = document.getElementById('message');
+
+    if (!username || !password) {
+        messageDiv.textContent = 'Please fill in all fields.';
+        messageDiv.style.color = 'red';
+        return;
+    }
+
+    fetch('http://127.0.0.1/library/public/user/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            messageDiv.textContent = 'Login successful!';
+            messageDiv.style.color = 'green';
+
+            // Store the token in a cookie
+            document.cookie = `token=${data.token}; path=/; max-age=86400`; // 1 day expiry
+
+            // Redirect to main.html
+            setTimeout(() => {
+                window.location.href = 'main.html';
+            }, 1000); // Delay for user to see the success message
+        } else {
+            messageDiv.textContent = data.data?.title || 'An error occurred.';
+            messageDiv.style.color = 'red';
+        }
+    })
+    .catch(error => {
+        messageDiv.textContent = 'Error connecting to the server: ' + error.message;
+        messageDiv.style.color = 'red';
+        console.error('Fetch error:', error);
+    });
+});
+
+   
     </script>
 </body>
 </html>

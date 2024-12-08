@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Show Users</title>
+    <title>Show Books</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -68,17 +68,18 @@
 </head>
 <body>
     <div class="container">
-        <h1>Authors List</h1>
+        <h1>Book List</h1>
         <button class="back-btn" onclick="goBack()">Back to Main Page</button>
-        <button id="loadUsersBtn">Load Users</button>
+        <button id="loadBooksBtn">Load Books</button>
 
         <div id="message" class="message"></div>
 
-        <table id="usersTable">
+        <table id="bookTable">
             <thead>
                 <tr>
-                    <th>User ID</th>
-                    <th>Username</th>
+                    <th>Book ID</th>
+                    <th>Book Title</th>
+                    <th>Author ID</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -90,22 +91,22 @@
     window.location.href = 'main.html'; // Redirect to the main page
 }
 
-// Show Authors JS
-document.getElementById('loadUsersBtn').addEventListener('click', function() {
+// Show Books JS
+document.getElementById('loadBooksBtn').addEventListener('click', function() {
     const messageDiv = document.getElementById('message');
-    const usersTable = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
+    const bookTable = document.getElementById('bookTable').getElementsByTagName('tbody')[0];
     
     // Get token from cookie
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
 
     if (!token) {
-        messageDiv.textContent = 'Please login to view users.';
+        messageDiv.textContent = 'Please login to view Books.';
         messageDiv.style.color = 'red';
         return;
     }
 
     // Send GET request to fetch authors
-    fetch('http://127.0.0.1/library/public/user/show', {
+    fetch('http://127.0.0.1/library/public/book/show', {
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + token
@@ -114,19 +115,21 @@ document.getElementById('loadUsersBtn').addEventListener('click', function() {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            messageDiv.textContent = 'Users loaded successfully.';
+            messageDiv.textContent = 'Books loaded successfully.';
             messageDiv.style.color = 'green';
             
-            // Clear previous users
-            usersTable.innerHTML = '';
+            // Clear previous authors
+            bookTable.innerHTML = '';
 
-            // Populate the table with users data
-            data.data.forEach(user => {
-                const row = usersTable.insertRow();
+            // Populate the table with book data
+            data.data.forEach(book => {
+                const row = bookTable.insertRow();
                 const cell1 = row.insertCell(0);
                 const cell2 = row.insertCell(1);
-                cell1.textContent = user.userid;
-                cell2.textContent = user.username;
+                const cell3 = row.insertCell(2);
+                cell1.textContent = book.bookid;
+                cell2.textContent = book.title;
+                cell3.textContent = book.authorid;
             });
 
             // Store the new token in the cookie (for next request)
@@ -135,7 +138,7 @@ document.getElementById('loadUsersBtn').addEventListener('click', function() {
             }
 
         } else {
-            messageDiv.textContent = data.data?.title || 'Error loading authors.';
+            messageDiv.textContent = data.data?.title || 'Error loading books.';
             messageDiv.style.color = 'red';
         }
     })
