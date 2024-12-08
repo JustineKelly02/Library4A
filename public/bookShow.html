@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Books</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Book List</h1>
+        <button class="back-btn" onclick="goBack()">Back to Main Page</button>
+        <button id="loadBooksBtn">Load Books</button>
+
+        <div id="message" class="message"></div>
+
+        <table id="bookTable">
+            <thead>
+                <tr>
+                    <th>Book ID</th>
+                    <th>Book Title</th>
+                    <th>Author ID</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        function goBack() {
+    window.location.href = 'main.html'; // Redirect to the main page
+}
+
+// Show Books JS
+document.getElementById('loadBooksBtn').addEventListener('click', function() {
+    const messageDiv = document.getElementById('message');
+    const bookTable = document.getElementById('bookTable').getElementsByTagName('tbody')[0];
+    
+    // Get token from cookie
+    const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
+
+    if (!token) {
+        messageDiv.textContent = 'Please login to view Books.';
+        messageDiv.style.color = 'red';
+        return;
+    }
+
+    // Send GET request to fetch authors
+    fetch('http://127.0.0.1/library/public/book/show', {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            messageDiv.textContent = 'Books loaded successfully.';
+            messageDiv.style.color = 'green';
+            
+            // Clear previous authors
+            bookTable.innerHTML = '';
+
+            // Populate the table with book data
+            data.data.forEach(book => {
+                const row = bookTable.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                const cell3 = row.insertCell(2);
+                cell1.textContent = book.bookid;
+                cell2.textContent = book.title;
+                cell3.textContent = book.authorid;
+            });
+
+            // Store the new token in the cookie (for next request)
+            if (data.token) {
+                setCookie('token', data.token, 1); // Store new token in the cookie
+            }
+
+        } else {
+            messageDiv.textContent = data.data?.title || 'Error loading books.';
+            messageDiv.style.color = 'red';
+        }
+    })
+    .catch(error => {
+        messageDiv.textContent = 'Error connecting to the server.';
+        messageDiv.style.color = 'red';
+        console.error(error);
+    });
+});
+
+// Function to set cookie
+function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000)); // Set expiration time
+    let expires = "expires=" + d.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+    </script>
+</body>
+</html>
