@@ -45,14 +45,12 @@
             text-align: center;
         }
 
-        footer {
-            background-color: #343a40;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            position: absolute;
-            width: 100%;
-            bottom: 0;
+        .button-group {
+            margin-bottom: 20px;
+        }
+
+        .button-group h3 {
+            margin-bottom: 10px;
         }
 
         button {
@@ -63,13 +61,45 @@
             background-color: #28a745;
             color: white;
             border-radius: 5px;
-            margin-top: 20px;
+            margin: 5px;
         }
 
         button:hover {
             background-color: #218838;
         }
+
+        .logout {
+            background-color: #dc3545;
+        }
+
+        .logout:hover {
+            background-color: #c82333;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+        }
     </style>
+    <script>
+        function logout() {
+            // Expire cookies
+            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+            // Optional: Clear localStorage/sessionStorage if used for tokens
+            localStorage.removeItem("authToken");
+            sessionStorage.removeItem("authToken");
+
+            // Redirect to the login page or confirmation page
+            window.location.href = 'userLogin.html';
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -84,11 +114,29 @@
     <div class="container">
         <h2>Welcome to the Library System</h2>
         <p>Select an option from the navigation bar to proceed.</p>
-        <button onclick="window.location.href='userShow.html'">Show Users</button>
-        <button onclick="window.location.href='authorShow.html'">Show Authors</button>
-        <button onclick="window.location.href='userUpdate.html'">Update User</button>
-        <button onclick="window.location.href='authorUpdate.html'">Update Author</button>
-        <button onclick="window.location.href='authorRegister.html'">Register an Author</button>
+
+        <div class="button-group">
+            <h3>User Management</h3>
+            <button onclick="window.location.href='userShow.html'">Show Users</button>
+            <button onclick="window.location.href='userUpdate.html'">Update User</button>
+        </div>
+
+        <div class="button-group">
+            <h3>Author Management</h3>
+            <button onclick="window.location.href='authorShow.html'">Show Authors</button>
+            <button onclick="window.location.href='authorRegister.html'">Register an Author</button>
+            <button onclick="window.location.href='authorUpdate.html'">Update Author</button>
+        </div>
+
+        <div class="button-group">
+            <h3>Book Management</h3>
+            <button onclick="window.location.href='bookShow.html'">Display Books</button>
+            <button onclick="window.location.href='bookRegister.html'">Register a Book</button>
+            <button onclick="window.location.href='bookUpdate.html'">Update a Book</button>
+            <button onclick="window.location.href='bookDelete.html'">Delete a Book</button>
+        </div>
+
+        <button class="logout" onclick="logout()">Logout</button>
     </div>
 
 
