@@ -179,8 +179,8 @@ Designed to streamline library operations, the system simplifies data management
 
   ```json
   {
-    "username": "existing username",
-    "password": "existing Password"
+    "username": "Marc1234",
+    "password": "asodogcat"
   }
   ```
 
@@ -297,7 +297,7 @@ Designed to streamline library operations, the system simplifies data management
     "name": "Author_Name"
   }
   ```
-
+`  `
 - **Expected Response:**
 
   - **Success:**
@@ -723,5 +723,10 @@ This project is developed as part of a midterm requirement for the ITPC 115(Syst
 - **University:** Don Mariano Marcos Memorial State University (Mid-La Union Campus)
 - **Email:** jflorendo09252@student.dmmmsu.edu.ph
 - **Phone:** 09762385700
+
+-  **Name:** Marc John Valdez
+- **University:** Don Mariano Marcos Memorial State University (Mid-La Union Campus)
+- **Email:** mvaldez21262@student.dmmmsu.edu.ph
+- **Phone:** 09519952052
 
 <p align="right">(<a href="#library-management-system">back to top</a>)</p>
