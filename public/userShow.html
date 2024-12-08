@@ -86,7 +86,71 @@
     </div>
 
     <script>
-        src="script.js"
+document.getElementById('loadUsersBtn').addEventListener('click', function() {
+    const messageDiv = document.getElementById('message');
+    const usersTable = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
+
+    // Get token from cookie
+    const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
+
+    if (!token) {
+        messageDiv.textContent = 'Please login to view users.';
+        messageDiv.style.color = 'red';
+        return;
+    }
+
+    // Send GET request to fetch users
+    fetch('http://127.0.0.1/library/public/user/show', {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            messageDiv.textContent = 'Users loaded successfully.';
+            messageDiv.style.color = 'green';
+            
+            // Clear previous users
+            usersTable.innerHTML = '';
+
+            // Populate the table with users data
+            data.data.forEach(user => {
+                const row = usersTable.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                cell1.textContent = user.userid;
+                cell2.textContent = user.username;
+            });
+
+            // Store the new token in the cookie (for next request)
+            if (data.token) {
+                setCookie('token', data.token, 1); // Store new token in the cookie
+            }
+
+        } else {
+            messageDiv.textContent = data.data?.title || 'Error loading users.';
+            messageDiv.style.color = 'red';
+        }
+    })
+    .catch(error => {
+        messageDiv.textContent = 'Error connecting to the server.';
+        messageDiv.style.color = 'red';
+        console.error(error);
+    });
+});
+
+// Function to set cookie
+function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000)); // Set expiration time
+    let expires = "expires=" + d.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+function goBack() {
+    window.location.href = 'main.html'; // Redirect to the main page
+}
     </script>
 </body>
 </html>
