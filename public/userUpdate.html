@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #117a8b;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Update User Details</h1>
+        <form id="updateUserForm">
+            <label for="userid">User ID:</label>
+            <input type="text" id="userid" placeholder="Enter your User ID" required>
+
+            <label for="username">New Username:</label>
+            <input type="text" id="username" placeholder="Enter new username" required>
+
+            <label for="password">New Password:</label>
+            <input type="password" id="password" placeholder="Enter new password" required>
+            
+            <button type="button" id="updateUserBtn">Update</button>
+            
+            <div id="message"></div>
+        </form>
+        <p>
+            <a href="main.html">Go to Main Page</a>
+        </p>
+    </div>
+
+    <script>
+        // Helper function to get a cookie by name
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        document.getElementById('updateUserBtn').addEventListener('click', () => {
+            const userid = document.getElementById('userid').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('message');
+            const token = getCookie('token'); // Retrieve token from cookie
+
+            if (!userid || !username || !password) {
+                messageDiv.textContent = 'Please fill in all fields.';
+                messageDiv.style.color = 'red';
+                return;
+            }
+
+            if (!token) {
+                messageDiv.textContent = 'Please login to update user details.';
+                messageDiv.style.color = 'red';
+                return;
+            }
+
+            fetch('http://127.0.0.1/library/public/user/update', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: token, userid: userid, username: username, password: password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    messageDiv.textContent = 'User details updated successfully!';
+                    messageDiv.style.color = 'green';
+
+                    // Update token in the cookie
+                    document.cookie = `token=${data.token}; path=/; max-age=86400`; // 1 day expiry
+                } else {
+                    messageDiv.textContent = data.data?.title || 'An error occurred.';
+                    messageDiv.style.color = 'red';
+                }
+            })
+            .catch(error => {
+                messageDiv.textContent = 'Error connecting to the server: ' + error.message;
+                messageDiv.style.color = 'red';
+                console.error('Fetch error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
