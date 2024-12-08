@@ -302,6 +302,9 @@ Fetches a list of all registered users, showing their IDs and usernames. Access 
 
 **a. Register Author** - register/add a new author to the database.
 
+**Description:**  
+  Adds a new author to the database. The author’s name must be unique, at least five characters long, and cannot be blank.
+
 - **Endpoint:** `/author/register`
 - **Method:** `POST`
 - **Sample Payload:**
@@ -329,6 +332,9 @@ Fetches a list of all registered users, showing their IDs and usernames. Access 
 
 **b. Display Author** - shows the database's list of authors.
 
+**Description:**  
+  Retrieves a list of all authors in the database, displaying their unique IDs and names.
+
 - **Endpoint:** `/author/show`
 - **Method:** `GET`
 - **Headers:** `Authorization: Bearer <insert generated jwtTokenHere from the users/authenticate>`
@@ -346,6 +352,9 @@ Fetches a list of all registered users, showing their IDs and usernames. Access 
     ```
 
 **c. Update Author** -updates the database with an author's information.
+
+**Description:**  
+  This API endpoint enables the modification of an existing author's details. To update the information, the request payload must include the `authorid`, which identifies the author whose data is being updated, along with the new `name` of the author. The new name provided must be at least 5 characters in length to meet the validation criteria. Additionally, the operation is secured by requiring a valid JWT token for authentication. Upon successful completion of the update request, a new JWT token will be issued and returned to the client, replacing the old token. This ensures that the token is refreshed as part of the secure update process.
 
 - **Endpoint:** `/author/update`
 - **Method:** `PUT`
@@ -372,6 +381,9 @@ Fetches a list of all registered users, showing their IDs and usernames. Access 
     ```
 
 **d. Delete Author** - Deletes an author from the database.
+
+**Description:**  
+  Deletes an existing author from the database based on their unique ID.
 
 - **Endpoint:** `/author/{authorid}`
 - **Method:** `DELETE`
@@ -403,6 +415,9 @@ Fetches a list of all registered users, showing their IDs and usernames. Access 
 
 **a. Register Book** - Register/add a new book to the library.
 
+**Description:**  
+ This API endpoint allows for the creation of a new book record in the database. The request must include the `title` of the book and the `authorid`, which is the unique identifier of the author to whom the book will be attributed. The operation is secured by requiring a valid JWT token for authentication. Upon successful creation of the book record, the response will include a newly issued JWT token and a confirmation message indicating that the book has been successfully added.
+
 - **Endpoint:** `/book/add`
 - **Method:** `POST`
 - **Sample Payload:**
@@ -431,6 +446,9 @@ Fetches a list of all registered users, showing their IDs and usernames. Access 
 
 **b. Display Books** - presents a database list of books.
 
+**Description:**  
+  Retrieves a list of all books in the database, displaying their book ID, title, author ID, and author name.
+
 - **Endpoint:** `/books/show`
 - **Method:** `GET`
 - **Headers:** `Authorization: Bearer <insert generated jwtTokenHere from the users/authenticate>`
@@ -453,6 +471,10 @@ Fetches a list of all registered users, showing their IDs and usernames. Access 
     ```
 
 **c. Update Book** - updates the database's information on a book.
+
+ **Description:**  
+  Updates the information of an existing book. The request must include the bookid (the ID of the book to be updated), the new title of the book, and the authorid. The name must be at least 5 characters long.
+
 
 - **Endpoint:** `/book/edit/{bookid}`
 - **Method:** `PUT`
@@ -481,6 +503,9 @@ Fetches a list of all registered users, showing their IDs and usernames. Access 
     ```
 
 **d. Delete Book** - removing a book from the database..
+
+ **Description:**  
+  Deletes an existing book from the database based on their unique ID.
 
 - **Endpoint:** `/book/{bookid}`
 - **Method:** `DELETE`
